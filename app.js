@@ -3,7 +3,7 @@
 let winston = require("winston");
 let EventEmitter2 = require('eventemitter2').EventEmitter2;
 let http = require("http");
-var wswinston = require("winston-websocket");
+let wswinston = require("winston-websocket");
 
 //plugins
 
