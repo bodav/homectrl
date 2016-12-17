@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "eventemitter2": "^2.2.1",
+    "express": "^4.14.0",
     "install": "^0.8.2",
     "npm": "^4.0.3",
     "sonos": "^0.12.1",

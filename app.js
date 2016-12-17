@@ -1,16 +1,15 @@
 "use strict";
 
 let winston = require("winston");
-let EventEmitter2 = require('eventemitter2').EventEmitter2;
 let http = require("http");
 let wswinston = require("winston-websocket");
-
-//plugins
+let config = require("./config.json");
+let eventbus = require("./eventbus");
 
 //create http server
 let server = http.createServer();
 
-//winston setup
+//winston logging setup
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
     level: "debug",
@@ -25,19 +24,13 @@ winston.add(wswinston.WSTransport, {
     }
 });
 
-//event router
-let emitter = new EventEmitter2();
-
-emitter.onAny((event, value) => {
-    //TODO: broadcast event
+//start server
+server.listen(config.port, () => {
+    winston.info(`Server is listening on port ${server.address().port}`);
 });
 
-//start server
-server.listen(9797);
-winston.info("Server is listening on port 9797");
+//init eventbus
+let bus = eventbus.initialize(server);
 
 //init plugins
-
-function initPlugin(plugin) {
-
-}
+require("./plugins/eventgen").initialize(server, bus);
