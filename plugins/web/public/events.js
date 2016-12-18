@@ -1,7 +1,6 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", (event) => {
-
     console.log("DOMContentLoaded");
 
     let ws = getEventSocket();
@@ -11,10 +10,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
     let eventInput = document.getElementById("eventInput");
 
     btnSend.addEventListener("click", () => {
-        let value = eventInput.value;
+        let eventName = eventInput.value;
+        let payload = payloadInput.value;
 
-        if (value != "") {
-            ws.send(value);
+        if (eventName != "") {
+            ws.send(JSON.stringify({
+                "event": eventName,
+                "payload": payload
+            }));
         }
     }, true);
 

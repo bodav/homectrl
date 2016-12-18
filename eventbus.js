@@ -16,6 +16,7 @@ module.exports.initialize = function (httpServer) {
         path: "/events"
     });
 
+    //broadcast events til clients
     emitter.onAny((event, value) => {
         wsServer.clients.forEach(function each(client) {
             client.send(JSON.stringify({
@@ -25,11 +26,13 @@ module.exports.initialize = function (httpServer) {
         });
     });
 
+    //receive events from clients
     wsServer.on("connection", (socket) => {
         winston.debug("Event client connected");
 
-        socket.on("message", (data) => {
-            emitter.emit("message", data);
+        socket.on("message", (msg) => {
+            let evnt = JSON.parse(msg);
+            emitter.emit(evnt.event, evnt.payload);
         });
     });
 

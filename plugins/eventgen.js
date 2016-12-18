@@ -7,11 +7,10 @@ module.exports.initialize = function (emitter) {
     winston.info("initializing eventgen plugin...");
 
     setInterval(() => {
-        winston.debug("[eventgen]: heartbeat");
-        emitter.emit("message", "testpayload");
+        emitter.emit("eventgen.testevent", "testpayload");
     }, 5000);
 
-    emitter.on("message", (data) => {
+    emitter.on("eventgen.*", (data) => {
         winston.debug("[eventgen]: Received event. Data: " + util.inspect(data));
     });
 
