@@ -4,7 +4,7 @@ let winston = require("winston");
 let EventEmitter2 = require('eventemitter2').EventEmitter2;
 let ws = require("ws");
 
-module.exports.initialize = function (httpServer) {
+module.exports.initialize = (httpServer) => {
     winston.info("Initializing eventbus...");
 
     //event router
@@ -18,7 +18,7 @@ module.exports.initialize = function (httpServer) {
 
     //broadcast events til clients
     emitter.onAny((event, value) => {
-        wsServer.clients.forEach(function each(client) {
+        wsServer.clients.forEach((client) => {
             client.send(JSON.stringify({
                 "event": event,
                 "payload": value

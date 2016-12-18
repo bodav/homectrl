@@ -34,8 +34,8 @@ let bus = eventbus.initialize(server);
 //init plugins
 winston.info("Initializing plugins...");
 
-require("./plugins/eventgen").initialize(bus);
+//require("./plugins/eventgen").initialize(bus);
 require("./plugins/web/web").initialize(app, bus);
-//require("./plugins/sonos/sonos").initialize(bus);
+require("./plugins/sonos/sonos").initialize(bus);
 
 winston.info("Plugin initialization done!");

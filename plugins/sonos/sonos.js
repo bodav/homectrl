@@ -3,59 +3,106 @@
 let winston = require("winston");
 let sonos = require('sonos');
 
-module.exports.initialize = function (emitter) {
+let sonosDevice = null;
+let searching = false;
 
+module.exports.initialize = (emitter) => {
+    winston.info("initializing sonos plugin...");
+
+    startDeviceSearch();
+
+    emitter.on("sonos.play", (payload) => {
+        play();
+    });
+
+    emitter.on("sonos.pause", (payload) => {
+        pause();
+    });
+
+    emitter.on("sonos.togglePlay", (payload) => {
+        togglePlay();
+    });
+
+    winston.info("sonos plugin initialized");
 };
 
-let searching = false;
-let search = sonos.search();
-searching = true;
-
-let kitchenDevice = null;
-
-search.on('DeviceAvailable', function (device, model) {
-    device.getZoneAttrs((err, info) => {
-        if (info.CurrentZoneName == "Køkken") {
-            kitchenDevice = device;
-            search.destroy();
-            searching = false;
-
-            kitchenDevice.currentTrack((err, data) => {
-                console.log(data);
-            });
-        }
-    });
-});
-
-setTimeout(function () {
-    console.log('Stop searching for Sonos devices')
-
-    if (searching) {
-        search.destroy();
+function play() {
+    if (sonosDevice == null) {
+        startDeviceSearch();
+        return;
     }
 
-    kitchenDevice.getCurrentState((err, data) => {
-        console.log(data);
+    sonosDevice.play((err, data) => {
+        if (err != null) {
+            winston.error("sonos.play:" + err);
+            startDeviceSearch();
+            return;
+        }
+    });
+}
+
+function pause() {
+    if (sonosDevice == null) {
+        startDeviceSearch();
+        return;
+    }
+
+    sonosDevice.pause((err, data) => {
+        if (err != null) {
+            winston.error("sonos.pause:" + err);
+            startDeviceSearch();
+            return;
+        }
+    });
+}
+
+function togglePlay() {
+    if (sonosDevice == null) {
+        startDeviceSearch();
+        return;
+    }
+
+    sonosDevice.getCurrentState((err, state) => {
+        if (err != null) {
+            winston.error("sonos.togglePlay:" + err);
+            startDeviceSearch();
+            return;
+        }
+
+        if (state == "playing") {
+            pause();
+        } else if (state == "stopped") {
+            play();
+        }
+    });
+}
+
+function startDeviceSearch() {
+    if (searching) {
+        winston.warn("already searching");
+        return;
+    }
+
+    winston.debug("Starting sonos device search");
+    let search = sonos.search();
+    searching = true;
+
+    search.on("DeviceAvailable", (device, model) => {
+        winston.debug("Found sonos device");
+        device.getZoneAttrs((err, info) => {
+            if (info.CurrentZoneName == "Køkken") {
+                winston.debug("Found 'Køkken' sonos device. Stopping device search");
+                sonosDevice = device;
+                search.destroy();
+                searching = false;
+            }
+        });
     });
 
-    // kitchenDevice.getFavoritesRadioStations({"start":0, "total":100}, (err, data) => {
-    //     console.log(data);
-    // });
-
-    // kitchenDevice.queueNext("x-sonosapi-stream:s59265?sid=254&flags=32&sn=0", (err, queued) => {
-    // console.log(queued);
-
-
-    // });
-
-    kitchenDevice.play("", (err, data) => {
-        console.log(data);
-    });
-
-    //skala
-    //x-sonosapi-stream:s59265?sid=254&flags=32&sn=0
-
-    // kitchenDevice.pause((err, data) => {
-    //     console.log(data);
-    // });
-}, 5000);
+    setTimeout(() => {
+        if (searching) {
+            winston.debug("Stopping device search");
+            search.destroy();
+        }
+    }, 15000);
+}

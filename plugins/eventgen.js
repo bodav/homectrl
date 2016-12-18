@@ -3,7 +3,7 @@
 let winston = require("winston");
 let util = require("util");
 
-module.exports.initialize = function (emitter) {
+module.exports.initialize = (emitter) => {
     winston.info("initializing eventgen plugin...");
 
     setInterval(() => {

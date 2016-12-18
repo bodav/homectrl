@@ -3,7 +3,7 @@
 let winston = require("winston");
 let express = require("express");
 
-module.exports.initialize = function (app, emitter) {
+module.exports.initialize = (app, emitter) => {
     winston.info("initializing web plugin...");
 
     app.use(express.static('plugins/web/public'));
@@ -11,7 +11,6 @@ module.exports.initialize = function (app, emitter) {
     // app.get("/", function (req, res) {
     //     res.redirect("/public/index.html");
     // });
-    //message.appendTo($('body')).fadeIn(300).delay(3000).fadeOut(500);
 
     winston.info("web plugin initialized");
 }
