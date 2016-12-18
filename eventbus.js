@@ -17,7 +17,12 @@ module.exports.initialize = function (httpServer) {
     });
 
     emitter.onAny((event, value) => {
-        //wsServer.emit(event, value);
+        wsServer.clients.forEach(function each(client) {
+            client.send(JSON.stringify({
+                "event": event,
+                "payload": value
+            }));
+        });
     });
 
     wsServer.on("connection", (socket) => {

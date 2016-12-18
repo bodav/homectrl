@@ -5,9 +5,13 @@ let http = require("http");
 let wswinston = require("winston-websocket");
 let config = require("./config.json");
 let eventbus = require("./eventbus");
+let express = require("express");
 
-//create http server
-let server = http.createServer();
+//create express app
+let app = express();
+
+//start server
+let server = app.listen(config.port);
 
 //winston logging setup
 winston.remove(winston.transports.Console);
@@ -24,13 +28,14 @@ winston.add(wswinston.WSTransport, {
     }
 });
 
-//start server
-server.listen(config.port, () => {
-    winston.info(`Server is listening on port ${server.address().port}`);
-});
-
 //init eventbus
 let bus = eventbus.initialize(server);
 
 //init plugins
-require("./plugins/eventgen").initialize(server, bus);
+winston.info("Initializing plugins...");
+
+require("./plugins/eventgen").initialize(bus);
+require("./plugins/web/web").initialize(app, bus);
+//require("./plugins/sonos/sonos").initialize(bus);
+
+winston.info("Plugin initialization done!");

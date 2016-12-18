@@ -1,6 +1,11 @@
 "use strict";
 
+let winston = require("winston");
 let sonos = require('sonos');
+
+module.exports.initialize = function (emitter) {
+
+};
 
 let searching = false;
 let search = sonos.search();
