@@ -63,7 +63,7 @@ function pollSensorSonosPlayState(client, eventBus) {
                 lastFlagState = flagState;
                 lastUpdated = timestamp;
 
-                eventBus.emit("hue.sensor.sonosplaystate", flagState);
+                eventBus.emit("hue.sensor.SonosPlayState.changed", flagState);
             }
         })
         .catch(error => {

@@ -23,7 +23,7 @@ module.exports.initialize = (eventBus) => {
         togglePlay();
     });
 
-    eventBus.on("hue.sensor.sonosplaystate", (state) => {
+    eventBus.on("hue.sensor.SonosPlayState.changed", (state) => {
         if (state) {
             play();
         } else {
