@@ -6,21 +6,29 @@ let sonos = require('sonos');
 let sonosDevice = null;
 let searching = false;
 
-module.exports.initialize = (emitter) => {
+module.exports.initialize = (eventBus) => {
     winston.info("initializing sonos plugin...");
 
     startDeviceSearch();
 
-    emitter.on("sonos.play", (payload) => {
+    eventBus.on("sonos.play", (payload) => {
         play();
     });
 
-    emitter.on("sonos.pause", (payload) => {
+    eventBus.on("sonos.pause", (payload) => {
         pause();
     });
 
-    emitter.on("sonos.togglePlay", (payload) => {
+    eventBus.on("sonos.togglePlay", (payload) => {
         togglePlay();
+    });
+
+    eventBus.on("hue.sensor.sonosplaystate", (state) => {
+        if (state) {
+            play();
+        } else {
+            pause();
+        }
     });
 
     winston.info("sonos plugin initialized");

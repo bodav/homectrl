@@ -37,5 +37,6 @@ winston.info("Initializing plugins...");
 //require("./plugins/eventgen").initialize(bus);
 require("./plugins/web/web").initialize(app, bus);
 require("./plugins/sonos/sonos").initialize(bus);
+require("./plugins/hue/hue").initialize(bus, config);
 
 winston.info("Plugin initialization done!");
