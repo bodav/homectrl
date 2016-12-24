@@ -37,7 +37,7 @@ function initEvents(client, eventBus) {
 
     setInterval(() => {
         pollSensorSonosPlayState(client, eventBus);
-    }, 2000);
+    }, 5000);
 
     winston.info("hue events initialized");
 }
@@ -47,8 +47,6 @@ let lastFlagState = false;
 let lastUpdated = null;
 
 function pollSensorSonosPlayState(client, eventBus) {
-    winston.debug("polling SonosPlayState sensor");
-
     client.sensors.getById(5)
         .then(sensor => {
             let flagState = sensor.state.attributes.attributes.flag;
