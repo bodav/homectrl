@@ -5,7 +5,7 @@ function formatLog(log) {
 }
 
 function formatEvent(event) {
-    return `[Event:${event.event}][Payload]: ${event.payload}`;
+    return `[Event:${event.event}][Payload]: ${JSON.stringify(event.payload)}`;
 }
 
 function getLogSocket() {

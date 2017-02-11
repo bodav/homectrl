@@ -7,7 +7,13 @@ let sonosDevice = null;
 let searching = false;
 
 module.exports.initialize = (bus) => {
-    winston.info("initializing sonos plugin...");
+    winston.info("Initializing Sonos plugin...");
+
+    bus.on("plugin.info", () => {
+        bus.emit("plugin.info.sonos", {
+            name: "Sonos"
+        });
+    });
 
     startDeviceSearch();
 
@@ -35,7 +41,7 @@ module.exports.initialize = (bus) => {
         }
     });
 
-    winston.info("sonos plugin initialized");
+    winston.info("Sonos plugin initialized");
 };
 
 function play() {
@@ -91,7 +97,7 @@ function togglePlay() {
 
 function startDeviceSearch() {
     if (searching) {
-        winston.warn("already searching! Aborting new device search");
+        winston.warn("Already searching for Sonos devices! Aborting new device search");
         return;
     }
 
@@ -109,7 +115,7 @@ function startDeviceSearch() {
                 search.destroy();
                 searching = false;
             } else {
-                winston.debug("ignoring device");
+                winston.debug("Ignoring device");
             }
         });
     });

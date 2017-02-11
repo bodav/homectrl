@@ -1,7 +1,6 @@
 "use strict";
 
 let winston = require("winston");
-let http = require("http");
 let wswinston = require("winston-websocket");
 let winstoncbuff = require('winston-circular-buffer');
 let config = require("./config.json");
@@ -15,13 +14,15 @@ let app = express();
 let server = app.listen(config.port);
 
 //winston logging setup
+//Console transport
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
-    level: "debug",
+    level: config.logLevel,
     colorize: true,
     timestamp: true
 });
 
+//Websocket transport
 winston.add(wswinston.WSTransport, {
     wsoptions: {
         server: server,
@@ -29,19 +30,20 @@ winston.add(wswinston.WSTransport, {
     }
 });
 
+//Circular buffer transport
 winston.add(winston.transports.CircularBuffer, {
-    name: 'circular-buffer',
-    level: 'debug',
+    name: "circular-buffer",
+    level: config.logLevel,
     json: true,
-    size: 100
+    size: config.loggingBufferSize
 });
 
 winston.info(`http server listening on port: ${config.port}`);
 
-//init eventbus
+//Init eventbus
 let bus = eventbus.initialize(server);
 
-//init plugins
+//Init plugins
 winston.info("Initializing plugins...");
 
 require("./plugins/web/web").initialize(app, bus);
@@ -50,15 +52,3 @@ require("./plugins/web/web").initialize(app, bus);
 require("./plugins/pushover/pushover").initialize(bus, config);
 
 winston.info("Plugin initialization done!");
-
-// var options = {
-//     json: true,
-//     order: 'asc'
-// };
-
-// winston.query(options, function (err, results) {
-//     // Check err, handle results array
-//     console.log(results);
-// });
-
-//https://www.npmjs.com/package/rpi-gpio

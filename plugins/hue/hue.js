@@ -4,9 +4,16 @@ let huejay = require('huejay');
 let winston = require("winston");
 
 module.exports.initialize = (bus, config) => {
-    winston.info("initializing hue plugin...");
+    winston.info("Initializing Hue plugin...");
+
+    bus.on("plugin.info", () => {
+        bus.emit("plugin.info.hue", {
+            name: "Hue"
+        });
+    });
+
     discoverBridge(bus, config.hueUserKey);
-    winston.info("hue plugin initialized");
+    winston.info("Hue plugin initialized");
 };
 
 function createBridgeClient(ip, hueUserKey) {
@@ -25,6 +32,8 @@ function discoverBridge(bus, hueUserKey) {
                 winston.debug("Hue Bridge found with ip: " + bridge.ip);
                 let client = createBridgeClient(bridge.ip, hueUserKey);
                 initEvents(client, bus);
+            } else {
+                winston.debug("No hue bridges found!");
             }
         })
         .catch((error) => {
@@ -62,7 +71,7 @@ function pollSensorSonosPlayState(client, bus) {
                 lastFlagState = flagState;
                 lastUpdated = timestamp;
             } else if (lastFlagState != flagState && lastUpdated != timestamp) {
-                winston.debug("SonosPlayState sensor updated!");
+                winston.debug("Hue SonosPlayState sensor updated!");
                 lastFlagState = flagState;
                 lastUpdated = timestamp;
 
@@ -70,7 +79,7 @@ function pollSensorSonosPlayState(client, bus) {
             }
         })
         .catch(error => {
-            winston.error('Could not find SonosPlayState sensor');
+            winston.error("Could not find SonosPlayState sensor");
             winston.error(error);
         });
 }

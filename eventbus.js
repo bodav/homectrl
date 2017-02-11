@@ -3,20 +3,21 @@
 let winston = require("winston");
 let EventEmitter2 = require('eventemitter2').EventEmitter2;
 let ws = require("ws");
+let util = require("util");
 
 module.exports.initialize = (httpServer) => {
     winston.info("Initializing eventbus...");
 
-    //Internal event router
+    //Internal eventbus
     let emitter = new EventEmitter2();
 
-    //External event socket
+    //External event websocket
     let wsServer = new ws.Server({
         server: httpServer,
         path: "/events"
     });
 
-    //Broadcast events til clients
+    //Broadcast events to external clients
     emitter.onAny((event, value) => {
         wsServer.clients.forEach((client) => {
             client.send(JSON.stringify({
@@ -26,17 +27,21 @@ module.exports.initialize = (httpServer) => {
         });
     });
 
-    //Receive events from clients
+    //Receive events from external clients
     wsServer.on("connection", (socket) => {
-        winston.debug("Event client connected");
+        winston.debug("Websocket eventbus client connected");
 
         socket.on("message", (msg) => {
+
             let evnt = JSON.parse(msg);
-            emitter.emit(evnt.event, evnt.payload);
+            winston.debug(util.inspect(evnt));
+            let payload = JSON.parse(evnt.payload);
+
+            emitter.emit(evnt.event, payload);
         });
     });
 
-    winston.info("eventbus initialized");
+    winston.info("Eventbus initialized");
 
     return emitter;
 };

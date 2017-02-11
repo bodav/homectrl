@@ -7,11 +7,11 @@ let client = null;
 let user = null;
 
 module.exports.initialize = (bus, config) => {
-    winston.info("initializing pushover plugin...");
+    winston.info("Initializing Pushover plugin...");
 
     bus.on("plugin.info", () => {
         bus.emit("plugin.info.pushover", {
-            name: "pushover"
+            name: "Pushover"
         });
     });
 
@@ -20,7 +20,7 @@ module.exports.initialize = (bus, config) => {
 
     bus.on("pushover.notify", (payload) => {
         winston.debug("[Event][pushover.notify]: " + payload);
-
+        console.log(JSON.parse(payload));
         let msg = createMessage(payload.message);
 
         client.sendMessage(msg)
@@ -33,17 +33,17 @@ module.exports.initialize = (bus, config) => {
             });
     });
 
-    winston.info("pushover plugin initialized");
+    winston.info("Pushover plugin initialized");
 };
 
-function createMessage(message) {
-    let msg = new chump.Message({
+function createMessage(msg) {
+    let m = new chump.Message({
         title: "HomeCtrl",
-        message: message,
+        message: msg,
         enableHtml: false,
         user: user,
-        priority: new chump.Priority('normal')
+        priority: new chump.Priority("normal")
     });
 
-    return msg;
+    return m;
 }

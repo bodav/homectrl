@@ -1,5 +1,7 @@
 {
     "port": 9797,
+    "loggingBufferSize": 100,
+    "logLevel": "debug",
     "hueUserKey": "",
     "pushoverAppKey": "",
     "pushoverUserKey": ""
