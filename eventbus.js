@@ -7,16 +7,16 @@ let ws = require("ws");
 module.exports.initialize = (httpServer) => {
     winston.info("Initializing eventbus...");
 
-    //event router
+    //Internal event router
     let emitter = new EventEmitter2();
 
-    //external event socket
+    //External event socket
     let wsServer = new ws.Server({
         server: httpServer,
         path: "/events"
     });
 
-    //broadcast events til clients
+    //Broadcast events til clients
     emitter.onAny((event, value) => {
         wsServer.clients.forEach((client) => {
             client.send(JSON.stringify({
@@ -26,7 +26,7 @@ module.exports.initialize = (httpServer) => {
         });
     });
 
-    //receive events from clients
+    //Receive events from clients
     wsServer.on("connection", (socket) => {
         winston.debug("Event client connected");
 

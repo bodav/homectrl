@@ -1,4 +1,6 @@
 {
     "port": 9797,
-    "hueUserKey": ""
+    "hueUserKey": "",
+    "pushoverAppKey": "",
+    "pushoverUserKey": ""
 }

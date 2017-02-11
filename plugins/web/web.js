@@ -3,7 +3,7 @@
 let winston = require("winston");
 let express = require("express");
 
-module.exports.initialize = (app, emitter) => {
+module.exports.initialize = (app, bus) => {
     winston.info("initializing web plugin...");
 
     app.use(express.static('plugins/web/public'));

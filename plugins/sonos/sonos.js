@@ -6,24 +6,28 @@ let sonos = require('sonos');
 let sonosDevice = null;
 let searching = false;
 
-module.exports.initialize = (eventBus) => {
+module.exports.initialize = (bus) => {
     winston.info("initializing sonos plugin...");
 
     startDeviceSearch();
 
-    eventBus.on("sonos.play", (payload) => {
+    bus.on("sonos.play", (payload) => {
+        winston.debug("[Event][sonos.play]: " + payload);
         play();
     });
 
-    eventBus.on("sonos.pause", (payload) => {
+    bus.on("sonos.pause", (payload) => {
+        winston.debug("[Event][sonos.pause]: " + payload);
         pause();
     });
 
-    eventBus.on("sonos.togglePlay", (payload) => {
+    bus.on("sonos.togglePlay", (payload) => {
+        winston.debug("[Event][sonos.togglePlay]: " + payload);
         togglePlay();
     });
 
-    eventBus.on("hue.sensor.SonosPlayState.changed", (state) => {
+    bus.on("hue.sensor.SonosPlayState.changed", (state) => {
+        winston.debug("[Event][hue.sensor.SonosPlayState.changed]: " + payload);
         if (state) {
             play();
         } else {
@@ -87,7 +91,7 @@ function togglePlay() {
 
 function startDeviceSearch() {
     if (searching) {
-        winston.warn("already searching");
+        winston.warn("already searching! Aborting new device search");
         return;
     }
 
@@ -98,18 +102,21 @@ function startDeviceSearch() {
     search.on("DeviceAvailable", (device, model) => {
         winston.debug("Found sonos device");
         device.getZoneAttrs((err, info) => {
+            winston.debug("Sonos device name: " + info.CurrentZoneName);
             if (info.CurrentZoneName == "Køkken") {
                 winston.debug("Found 'Køkken' sonos device. Stopping device search");
                 sonosDevice = device;
                 search.destroy();
                 searching = false;
+            } else {
+                winston.debug("ignoring device");
             }
         });
     });
 
     setTimeout(() => {
         if (searching) {
-            winston.debug("Stopping device search");
+            winston.debug("Stopping Sonos device search");
             search.destroy();
         }
     }, 15000);

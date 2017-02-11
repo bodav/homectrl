@@ -3,9 +3,9 @@
 let huejay = require('huejay');
 let winston = require("winston");
 
-module.exports.initialize = (eventBus, config) => {
+module.exports.initialize = (bus, config) => {
     winston.info("initializing hue plugin...");
-    discoverBridge(eventBus, config.hueUserKey);
+    discoverBridge(bus, config.hueUserKey);
     winston.info("hue plugin initialized");
 };
 
@@ -17,40 +17,45 @@ function createBridgeClient(ip, hueUserKey) {
     return client;
 }
 
-function discoverBridge(eventBus, hueUserKey) {
+function discoverBridge(bus, hueUserKey) {
     huejay.discover()
-        .then(bridges => {
+        .then((bridges) => {
             if (bridges.length > 0) {
                 let bridge = bridges[0];
                 winston.debug("Hue Bridge found with ip: " + bridge.ip);
                 let client = createBridgeClient(bridge.ip, hueUserKey);
-                initEvents(client, eventBus);
+                initEvents(client, bus);
             }
         })
-        .catch(error => {
-            winston.error(`An discover error occurred: ${error.message}`);
+        .catch((error) => {
+            winston.error("Error discovering Hue bridges!");
+            winston.error(error);
         });
 }
 
-function initEvents(client, eventBus) {
+function initEvents(client, bus) {
     winston.info("Initializing Hue events...");
 
     setInterval(() => {
-        pollSensorSonosPlayState(client, eventBus);
+        pollSensorSonosPlayState(client, bus);
     }, 5000);
 
-    winston.info("hue events initialized");
+    winston.info("Hue events initialized");
 }
 
 let sonosPlayStateSensorId = 5;
 let lastFlagState = false;
 let lastUpdated = null;
 
-function pollSensorSonosPlayState(client, eventBus) {
+function pollSensorSonosPlayState(client, bus) {
+    winston.debug("Polling Hue sensor with id: " + sonosPlayStateSensorId);
     client.sensors.getById(5)
         .then(sensor => {
             let flagState = sensor.state.attributes.attributes.flag;
             let timestamp = sensor.state.attributes.attributes.lastupdated;
+
+            winston.debug("Sensor flag state: " + flagState);
+            winston.debug("Sensor timestamp: " + timestamp);
 
             if (lastUpdated == null) {
                 winston.debug("First time polling SonosPlayState sensor, updating local variables");
@@ -61,7 +66,7 @@ function pollSensorSonosPlayState(client, eventBus) {
                 lastFlagState = flagState;
                 lastUpdated = timestamp;
 
-                eventBus.emit("hue.sensor.SonosPlayState.changed", flagState);
+                bus.emit("hue.sensor.SonosPlayState.changed", flagState);
             }
         })
         .catch(error => {
