@@ -14,7 +14,7 @@ module.exports.initialize = (httpServer) => {
     //External event websocket
     let wsServer = new ws.Server({
         server: httpServer,
-        path: "/events"
+        path: "/eventbus"
     });
 
     //Broadcast events to external clients

@@ -20,7 +20,7 @@ module.exports.initialize = (bus, config) => {
 
     bus.on("pushover.notify", (payload) => {
         winston.debug("[Event][pushover.notify]: " + payload);
-        console.log(JSON.parse(payload));
+        //console.log(JSON.parse(payload));
         let msg = createMessage(payload.message);
 
         client.sendMessage(msg)

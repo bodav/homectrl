@@ -26,7 +26,7 @@ winston.add(winston.transports.Console, {
 winston.add(wswinston.WSTransport, {
     wsoptions: {
         server: server,
-        path: "/logs"
+        path: "/winston"
     }
 });
 
