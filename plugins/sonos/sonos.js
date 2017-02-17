@@ -9,12 +9,6 @@ let searching = false;
 module.exports.initialize = (bus) => {
     winston.info("Initializing Sonos plugin...");
 
-    bus.on("plugin.info", () => {
-        bus.emit("plugin.info.sonos", {
-            name: "Sonos"
-        });
-    });
-
     startDeviceSearch();
 
     bus.on("sonos.play", (payload) => {
@@ -25,11 +19,6 @@ module.exports.initialize = (bus) => {
     bus.on("sonos.pause", (payload) => {
         winston.debug("[Event][sonos.pause]: " + payload);
         pause();
-    });
-
-    bus.on("sonos.togglePlay", (payload) => {
-        winston.debug("[Event][sonos.togglePlay]: " + payload);
-        togglePlay();
     });
 
     bus.on("hue.sensor.SonosPlayState.changed", (state) => {
@@ -74,27 +63,6 @@ function pause() {
     });
 }
 
-function togglePlay() {
-    if (sonosDevice == null) {
-        startDeviceSearch();
-        return;
-    }
-
-    sonosDevice.getCurrentState((err, state) => {
-        if (err != null) {
-            winston.error("sonos.togglePlay:" + err);
-            startDeviceSearch();
-            return;
-        }
-
-        if (state == "playing") {
-            pause();
-        } else if (state == "stopped") {
-            play();
-        }
-    });
-}
-
 function startDeviceSearch() {
     if (searching) {
         winston.warn("Already searching for Sonos devices! Aborting new device search");
@@ -127,3 +95,18 @@ function startDeviceSearch() {
         }
     }, 15000);
 }
+
+module.exports.info = () => {
+    return {
+        name: "Sonos",
+        capabilities: [
+            { event: "sonos.play", direction: "listening", payload: "None" },
+            { event: "sonos.pause", direction: "listening", payload: "None" },
+            { event: "hue.sensor.SonosPlayState.changed", direction: "listening", payload: "state" },
+        ]
+    }
+};
+
+module.exports.destroy = () => {
+    winston.info("Sonos plugin destroyed");
+};
