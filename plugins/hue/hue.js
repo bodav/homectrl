@@ -5,24 +5,9 @@ let winston = require("winston");
 
 module.exports.initialize = (bus, config) => {
     winston.info("Initializing Hue plugin...");
-
-    bus.on("plugin.info", () => {
-        bus.emit("plugin.info.hue", {
-            name: "Hue"
-        });
-    });
-
     discoverBridge(bus, config.hueUserKey);
     winston.info("Hue plugin initialized");
 };
-
-function createBridgeClient(ip, hueUserKey) {
-    let client = new huejay.Client({
-        host: ip,
-        username: hueUserKey,
-    });
-    return client;
-}
 
 function discoverBridge(bus, hueUserKey) {
     huejay.discover()
@@ -40,6 +25,14 @@ function discoverBridge(bus, hueUserKey) {
             winston.error("Error discovering Hue bridges!");
             winston.error(error);
         });
+}
+
+function createBridgeClient(ip, hueUserKey) {
+    let client = new huejay.Client({
+        host: ip,
+        username: hueUserKey,
+    });
+    return client;
 }
 
 function initEvents(client, bus) {
@@ -83,3 +76,16 @@ function pollSensorSonosPlayState(client, bus) {
             winston.error(error);
         });
 }
+
+module.exports.info = () => {
+    return {
+        name: "Hue",
+        capabilities: [
+            { event: "hue.sensor.SonosPlayState.changed", direction: "outbound", payload: "State: true/false" }
+        ]
+    }
+};
+
+module.exports.destroy = () => {
+    winston.info("Hue plugin destroyed");
+};
