@@ -32,7 +32,7 @@ winston.add(wswinston.WSTransport, {
 
 //Circular buffer transport
 winston.add(winston.transports.CircularBuffer, {
-    name: "circular-buffer",
+    name: "buffer",
     level: config.logLevel,
     json: true,
     size: config.loggingBufferSize
@@ -43,12 +43,37 @@ winston.info(`http server listening on port: ${config.port}`);
 //Init eventbus
 let bus = eventbus.initialize(server);
 
+// process.on("SIGINT", () => {
+//     winston.info("Got SIGINT event! Closing down");
+// });
+
+let plugins = [];
+
+function getPluginInfos() {
+    let infos = [];
+    for(idx in plugins) {
+        let info = plugins[idx].info();
+        infos.push(info);
+    }
+    return infos;
+}
+
 //Init plugins
-winston.info("Initializing plugins...");
+winston.info("Loading plugins...");
 
-require("./plugins/web/web").initialize(app, bus);
-//require("./plugins/sonos/sonos").initialize(bus);
-//require("./plugins/hue/hue").initialize(bus, config);
-require("./plugins/pushover/pushover").initialize(bus, config);
+//pushover
+plugins.push(require("./plugins/echo").initialize(bus));
+plugins.push(require("./plugins/web/web").initialize(app, getPluginInfos));
+//plugins.push(require("./plugins/sonos/sonos").initialize(bus));
+//plugins.push(require("./plugins/hue/hue").initialize(bus, config));
+//plugins.push(require("./plugins/gpio/doorbell").initialize(bus));
 
-winston.info("Plugin initialization done!");
+winston.debug(plugins);
+
+winston.info("Plugin load done!");
+
+function loadPlugin(pluginPath) {
+    let plugin = require(pluginPath)
+    plugin.initialize(bus, config, app);
+    plugins.push(plugin);
+}

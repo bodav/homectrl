@@ -6,7 +6,7 @@ let sonos = require('sonos');
 let sonosDevice = null;
 let searching = false;
 
-module.exports.initialize = (bus) => {
+module.exports.initialize = (bus, config, http) => {
     winston.info("Initializing Sonos plugin...");
 
     startDeviceSearch();
@@ -99,10 +99,21 @@ function startDeviceSearch() {
 module.exports.info = () => {
     return {
         name: "Sonos",
-        capabilities: [
-            { event: "sonos.play", direction: "listening", payload: "None" },
-            { event: "sonos.pause", direction: "listening", payload: "None" },
-            { event: "hue.sensor.SonosPlayState.changed", direction: "listening", payload: "state" },
+        capabilities: [{
+                event: "sonos.play",
+                direction: "listening",
+                payload: "None"
+            },
+            {
+                event: "sonos.pause",
+                direction: "listening",
+                payload: "None"
+            },
+            {
+                event: "hue.sensor.SonosPlayState.changed",
+                direction: "listening",
+                payload: "state"
+            },
         ]
     }
 };

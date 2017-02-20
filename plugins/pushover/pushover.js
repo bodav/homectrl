@@ -6,22 +6,15 @@ let chump = require('chump');
 let client = null;
 let user = null;
 
-module.exports.initialize = (bus, config) => {
+module.exports.initialize = (bus, config, http) => {
     winston.info("Initializing Pushover plugin...");
-
-    bus.on("plugin.info", () => {
-        bus.emit("plugin.info.pushover", {
-            name: "Pushover"
-        });
-    });
 
     client = new chump.Client(config.pushoverAppKey);
     user = new chump.User(config.pushoverUserKey);
 
     bus.on("pushover.notify", (payload) => {
         winston.debug("[Event][pushover.notify]: " + payload);
-        //console.log(JSON.parse(payload));
-        let msg = createMessage(payload.message);
+        let msg = createMessage(payload);
 
         client.sendMessage(msg)
             .then(() => {
@@ -47,3 +40,18 @@ function createMessage(msg) {
 
     return m;
 }
+
+module.exports.info = () => {
+    return {
+        name: "Pushover",
+        capabilities: [{
+            event: "pushover.notify",
+            direction: "listening",
+            payload: "str: message"
+        }]
+    }
+};
+
+module.exports.destroy = () => {
+    winston.info("Pushover plugin destroyed");
+};

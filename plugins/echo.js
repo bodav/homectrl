@@ -20,9 +20,16 @@ module.exports.destroy = () => {
 module.exports.info = () => {
     return {
         name: "Echo",
-        capabilities: [
-            { event: "echo.ping", direction: "inbound", payload: "any" },
-            { event: "echo.pong", direction: "outbound", payload: "any" }
+        capabilities: [{
+                event: "echo.ping",
+                direction: "listening",
+                payload: "any"
+            },
+            {
+                event: "echo.pong",
+                direction: "emitting",
+                payload: "any"
+            }
         ]
     }
 };

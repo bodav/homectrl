@@ -35,9 +35,7 @@ module.exports.initialize = (httpServer) => {
 
             let evnt = JSON.parse(msg);
             winston.debug(util.inspect(evnt));
-            let payload = JSON.parse(evnt.payload);
-
-            emitter.emit(evnt.event, payload);
+            emitter.emit(evnt.event, evnt.payload);
         });
     });
 

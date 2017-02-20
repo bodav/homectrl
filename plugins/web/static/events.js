@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     ws.onopen = () => {
         console.log("socket opened");
-        setAlertConnected();
+        setBadgeConnected();
     };
 
     ws.onmessage = (evt) => {
@@ -36,6 +36,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     ws.onclose = () => {
         console.log("socket closed");
-        setAlertDisconnected();
+        setBadgeDisconnected();
     };
 });

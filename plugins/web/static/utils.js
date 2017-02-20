@@ -9,29 +9,27 @@ function formatEvent(event) {
 }
 
 function getLogSocket() {
-    return new WebSocket("ws://" + location.host + "/logs");
+    return new WebSocket("ws://" + location.host + "/winston");
 }
 
 function getEventSocket() {
-    return new WebSocket("ws://" + location.host + "/events");
+    return new WebSocket("ws://" + location.host + "/eventbus");
 }
 
-function setAlertConnected() {
-    let connectionStatusAlert = document.getElementById("connectionStatusAlert");
-    let connectionStatusLabel = document.getElementById("connectionStatusLabel");
+function setBadgeConnected() {
+    let badge = document.getElementById("badgeConnectionStatus");
 
-    if (connectionStatusAlert != null) {
-        connectionStatusAlert.className = "alert alert-success";
-        connectionStatusLabel.innerText = "Connected!";
+    if (badge != null) {
+        badge.className = "badge badge-success";
+        badge.innerText = "Connected";
     }
 }
 
-function setAlertDisconnected() {
-    let connectionStatusAlert = document.getElementById("connectionStatusAlert");
-    let connectionStatusLabel = document.getElementById("connectionStatusLabel");
+function setBadgeDisconnected() {
+    let badge = document.getElementById("badgeConnectionStatus");
 
-    if (connectionStatusAlert != null) {
-        connectionStatusAlert.className = "alert alert-danger";
-        connectionStatusLabel.innerText = "Not Connected!";
+    if (badge != null) {
+        badge.className = "badge badge-danger";
+        badge.innerText = "Disconnected";
     }
 }

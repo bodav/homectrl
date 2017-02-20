@@ -3,8 +3,9 @@
 let winston = require("winston");
 let express = require("express");
 let exphbs = require("express-handlebars");
+let util = require("util");
 
-module.exports.initialize = (app, bus) => {
+module.exports.initialize = (bus, config, app) => {
     winston.info("initializing web plugin...");
 
     app.engine("handlebars", exphbs({
@@ -17,32 +18,35 @@ module.exports.initialize = (app, bus) => {
     app.use("/static", express.static("plugins/web/static"));
 
     app.get("/", function (req, res) {
-        res.render("home");
+        res.render("home", {
+            viewTitle: "Event Client",
+            isHome: true
+        });
     });
 
     app.get("/log", function (req, res) {
-        res.render("log");
-    });
-
-    app.get("/events", function (req, res) {
-        res.render("events");
-    });
-
-    bus.on("plugin.info", () => {
-        bus.emit("plugin.info.web", {
-            name: "Web"
+        winston.query({
+            json: true,
+            order: "asc"
+        }, function (err, results) {
+            res.render("log", {
+                viewTitle: "Live log",
+                isHome: false,
+                logs: results.buffer,
+                plugins: getPluginInfos()
+            });
         });
     });
 
     winston.info("web plugin initialized");
 }
 
-// var options = {
-//     json: true,
-//     order: 'asc'
-// };
+module.exports.info = () => {
+    return {
+        name: "Web"
+    }
+};
 
-// winston.query(options, function (err, results) {
-//     // Check err, handle results array
-//     console.log(results);
-// });
+module.exports.destroy = () => {
+    winston.info("Web plugin destroyed");
+};

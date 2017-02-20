@@ -4,11 +4,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOMContentLoaded");
 
     let wsLog = getLogSocket();
-    let container = document.getElementById("logsContainer");
+    let container = document.getElementById("logContainer");
 
     wsLog.onopen = () => {
         console.log("socket opened");
-        setAlertConnected();
+        setBadgeConnected();
     };
 
     wsLog.onmessage = (evt) => {
@@ -21,6 +21,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     wsLog.onclose = () => {
         console.log("socket closed");
-        setAlertDisconnected();
+        setBadgeDisconnected();
     };
 });

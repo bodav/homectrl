@@ -3,7 +3,7 @@
 let huejay = require('huejay');
 let winston = require("winston");
 
-module.exports.initialize = (bus, config) => {
+module.exports.initialize = (bus, config, http) => {
     winston.info("Initializing Hue plugin...");
     discoverBridge(bus, config.hueUserKey);
     winston.info("Hue plugin initialized");
@@ -80,9 +80,11 @@ function pollSensorSonosPlayState(client, bus) {
 module.exports.info = () => {
     return {
         name: "Hue",
-        capabilities: [
-            { event: "hue.sensor.SonosPlayState.changed", direction: "outbound", payload: "State: true/false" }
-        ]
+        capabilities: [{
+            event: "hue.sensor.SonosPlayState.changed",
+            direction: "emitting",
+            payload: "State: true/false"
+        }]
     }
 };
 
