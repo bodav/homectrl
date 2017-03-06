@@ -6,7 +6,7 @@ let chump = require('chump');
 let client = null;
 let user = null;
 
-module.exports.initialize = (bus, config, http) => {
+module.exports.initialize = (bus, config) => {
     winston.info("Initializing Pushover plugin...");
 
     client = new chump.Client(config.pushoverAppKey);

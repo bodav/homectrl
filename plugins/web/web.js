@@ -5,7 +5,7 @@ let express = require("express");
 let exphbs = require("express-handlebars");
 let util = require("util");
 
-module.exports.initialize = (bus, config, app) => {
+module.exports.initialize = (bus, app) => {
     winston.info("initializing web plugin...");
 
     app.engine("handlebars", exphbs({
@@ -20,7 +20,8 @@ module.exports.initialize = (bus, config, app) => {
     app.get("/", function (req, res) {
         res.render("home", {
             viewTitle: "Event Client",
-            isHome: true
+            isHome: true,
+            events: getEventListeners(bus)
         });
     });
 
@@ -32,8 +33,8 @@ module.exports.initialize = (bus, config, app) => {
             res.render("log", {
                 viewTitle: "Live log",
                 isHome: false,
-                logs: results.buffer,
-                plugins: getPluginInfos()
+                events: getEventListeners(bus),
+                logs: results.buffer
             });
         });
     });
@@ -50,3 +51,14 @@ module.exports.info = () => {
 module.exports.destroy = () => {
     winston.info("Web plugin destroyed");
 };
+
+function getEventListeners(bus) {
+    let listeners = [];
+
+    for(let key in bus["_events"]) {
+        if(key != "maxListeners") {
+            listeners.push(key);
+        }
+    }
+    return listeners;
+}

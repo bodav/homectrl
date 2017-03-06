@@ -56,26 +56,11 @@
             <nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
                 <ul class="nav nav-pills flex-column">
                     <li class="nav-item">
-                        <span class="nav-link"><h5>Plugins</h5></span>
+                        <span class="nav-link"><h5>Event listeners</h5></span>
                     </li>
+                    {{#each events}}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sonos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pushover</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Hue</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Doorbell</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Web</a>
-                    </li>
-                    {{#each plugins}}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{this.name}}</a>
+                        <span class="nav-link" style="word-wrap: break-word;">{{this}}</span>
                     </li>
                     {{/each}}
                 </ul>

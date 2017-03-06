@@ -20,10 +20,13 @@ module.exports.initialize = (bus, config, http) => {
             if (!changeThrottle) {
                 changeThrottle = true;
                 winston.debug("Doorbell plugin - Got rising edge event");
-                bus.emit("Doorbell", {
+
+                bus.emit("doorbell.activated", {
                     pin: channel,
                     value: val
                 });
+
+                bus.emit("pushover.notify", "Doorbell activated");
 
                 setTimeout(() => {
                     winston.debug("Doorbell plugin - Resetting event throttle flag");
