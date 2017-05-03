@@ -38,20 +38,3 @@ module.exports.initialize = (bus, config, http) => {
 
     winston.info("Doorbell plugin initialized");
 };
-
-module.exports.destroy = () => {
-    winston.info("Destroying Doorbell plugin");
-    gpio.destroy();
-    winston.info("Doorbell plugin destroyed!");
-};
-
-module.exports.info = () => {
-    return {
-        name: "GPIO-Doorbell",
-        capabilities: [{
-            event: "Doorbell",
-            direction: "emitting",
-            payload: "None"
-        }]
-    }
-};

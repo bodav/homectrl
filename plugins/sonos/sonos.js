@@ -95,29 +95,3 @@ function startDeviceSearch() {
         }
     }, 15000);
 }
-
-module.exports.info = () => {
-    return {
-        name: "Sonos",
-        capabilities: [{
-                event: "sonos.play",
-                direction: "listening",
-                payload: "None"
-            },
-            {
-                event: "sonos.pause",
-                direction: "listening",
-                payload: "None"
-            },
-            {
-                event: "hue.sensor.SonosPlayState.changed",
-                direction: "listening",
-                payload: "state"
-            },
-        ]
-    }
-};
-
-module.exports.destroy = () => {
-    winston.info("Sonos plugin destroyed");
-};

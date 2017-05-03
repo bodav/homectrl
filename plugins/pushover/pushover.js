@@ -40,18 +40,3 @@ function createMessage(msg) {
 
     return m;
 }
-
-module.exports.info = () => {
-    return {
-        name: "Pushover",
-        capabilities: [{
-            event: "pushover.notify",
-            direction: "listening",
-            payload: "str: message"
-        }]
-    }
-};
-
-module.exports.destroy = () => {
-    winston.info("Pushover plugin destroyed");
-};

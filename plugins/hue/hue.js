@@ -76,18 +76,3 @@ function pollSensorSonosPlayState(client, bus) {
             winston.error(error);
         });
 }
-
-module.exports.info = () => {
-    return {
-        name: "Hue",
-        capabilities: [{
-            event: "hue.sensor.SonosPlayState.changed",
-            direction: "emitting",
-            payload: "State: true/false"
-        }]
-    }
-};
-
-module.exports.destroy = () => {
-    winston.info("Hue plugin destroyed");
-};

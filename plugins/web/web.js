@@ -42,16 +42,6 @@ module.exports.initialize = (bus, app) => {
     winston.info("web plugin initialized");
 }
 
-module.exports.info = () => {
-    return {
-        name: "Web"
-    }
-};
-
-module.exports.destroy = () => {
-    winston.info("Web plugin destroyed");
-};
-
 function getEventListeners(bus) {
     let listeners = [];
 
