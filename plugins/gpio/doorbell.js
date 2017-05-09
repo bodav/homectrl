@@ -1,25 +1,23 @@
-"use strict";
+'use strict'
 
 let winston = require("winston");
 let gpio = require('rpi-gpio');
 
-const INPUTPIN = 7;
-
 let changeThrottle = false;
 
-module.exports.initialize = (bus, config, http) => {
+module.exports.initialize = (bus, config) => {
     winston.info("Initializing Doorbell plugin...");
 
-    gpio.setup(INPUTPIN, gpio.DIR_IN, gpio.EDGE_RISING, (err) => {
+    gpio.setup(config.doorbellGpioPin, gpio.DIR_IN, gpio.EDGE_RISING, (err) => {
         if (err != undefined) {
-            winston.error("Error setting up gpio pin: " + INPUTPIN);
+            winston.error("Error setting up gpio pin: " + config.doorbellGpioPin);
             winston.error(err);
         }
 
         gpio.on("change", (channel, val) => {
             if (!changeThrottle) {
                 changeThrottle = true;
-                winston.debug("Doorbell plugin - Got rising edge event");
+                winston.verbose("Doorbell plugin - Got rising edge event");
 
                 bus.emit("doorbell.activated", {
                     pin: channel,
@@ -29,7 +27,7 @@ module.exports.initialize = (bus, config, http) => {
                 bus.emit("pushover.notify", "Doorbell activated");
 
                 setTimeout(() => {
-                    winston.debug("Doorbell plugin - Resetting event throttle flag");
+                    winston.verbose("Doorbell plugin - Resetting gpio change event throttle flag");
                     changeThrottle = false;
                 }, 4500);
             }

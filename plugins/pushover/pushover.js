@@ -13,12 +13,12 @@ module.exports.initialize = (bus, config) => {
     user = new chump.User(config.pushoverUserKey);
 
     bus.on("pushover.notify", (payload) => {
-        winston.debug("[Event][pushover.notify]: " + payload);
+        winston.verbose("[Event][pushover.notify]: " + payload);
         let msg = createMessage(payload);
 
         client.sendMessage(msg)
             .then(() => {
-                winston.debug("Pushover message sent");
+                winston.verbose("Pushover message sent");
             })
             .catch((error) => {
                 winston.error("Error sending pushover message!");

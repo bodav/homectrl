@@ -5,9 +5,19 @@ let express = require("express");
 let exphbs = require("express-handlebars");
 let util = require("util");
 
-module.exports.initialize = (bus, app) => {
+module.exports.initialize = (bus, app, config) => {
     winston.info("initializing web plugin...");
+    initViewEngine(app);
+    initRoutes(app, bus, config);
+    winston.info("web plugin initialized");
+}
 
+function getEventListeners(bus) {
+    let listeners = Object.keys(bus["_events"]).filter(key => key != "maxListeners");
+    return listeners;
+}
+
+function initViewEngine(app) {
     app.engine("handlebars", exphbs({
         defaultLayout: "layout",
         layoutsDir: "plugins/web/views"
@@ -16,12 +26,23 @@ module.exports.initialize = (bus, app) => {
     app.set('views', "plugins/web/views")
 
     app.use("/static", express.static("plugins/web/static"));
+}
+
+function initRoutes(app, bus, config) {
+    let events = getEventListeners(bus);
 
     app.get("/", function (req, res) {
         res.render("home", {
             viewTitle: "Event Client",
-            isHome: true,
-            events: getEventListeners(bus)
+            events: events
+        });
+    });
+
+    app.get("/config", function (req, res) {
+        res.render("config", {
+            viewTitle: "Configuration",
+            events: events,
+            config: config
         });
     });
 
@@ -32,23 +53,9 @@ module.exports.initialize = (bus, app) => {
         }, function (err, results) {
             res.render("log", {
                 viewTitle: "Live log",
-                isHome: false,
-                events: getEventListeners(bus),
+                events: events,
                 logs: results.buffer
             });
         });
     });
-
-    winston.info("web plugin initialized");
-}
-
-function getEventListeners(bus) {
-    let listeners = [];
-
-    for(let key in bus["_events"]) {
-        if(key != "maxListeners") {
-            listeners.push(key);
-        }
-    }
-    return listeners;
 }

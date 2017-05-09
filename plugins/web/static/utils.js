@@ -1,35 +1,27 @@
 "use strict";
 
-function formatLog(log) {
-    return `[${log.createdAt}][${log.level}]: ${log.message}`;
-}
+document.addEventListener("DOMContentLoaded", (event) => {
+    $("#navbar a[href='" + window.location.pathname + "']")
+        .parent()
+        .addClass("active");
 
-function formatEvent(event) {
-    return `[Event:${event.event}][Payload]: ${JSON.stringify(event.payload)}`;
-}
+    if(window.location.pathname === "/config") {
+        hideConnectionBadge();
+    }
+});
 
-function getLogSocket() {
-    return new WebSocket("ws://" + location.host + "/winston");
-}
-
-function getEventSocket() {
-    return new WebSocket("ws://" + location.host + "/eventbus");
+function hideConnectionBadge() {
+    $("#badgeConnectionStatus").hide();
 }
 
 function setBadgeConnected() {
-    let badge = document.getElementById("badgeConnectionStatus");
-
-    if (badge != null) {
-        badge.className = "badge badge-success";
-        badge.innerText = "Connected";
-    }
+    $("#badgeConnectionStatus")
+        .removeClass("badge-danger")
+        .addClass("badge-success");
 }
 
 function setBadgeDisconnected() {
-    let badge = document.getElementById("badgeConnectionStatus");
-
-    if (badge != null) {
-        badge.className = "badge badge-danger";
-        badge.innerText = "Disconnected";
-    }
+    $("#badgeConnectionStatus")
+        .removeClass("badge-success")
+        .addClass("badge-danger");
 }

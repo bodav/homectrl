@@ -24,27 +24,23 @@
 <body>
     <nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
         <button class="navbar-toggler navbar-toggler-right hidden-lg-up" type="button" data-toggle="collapse" data-target="#navbarsDefault"
-            aria-controls="navbarsDefault" aria-expanded="false" aria-label="Toggle navigation">
+            aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <a class="navbar-brand" href="/">HomeCtrl</a>
 
-            <div class="collapse navbar-collapse" id="navbarsDefault">
+            <div class="collapse navbar-collapse" id="navbar">
                 <ul class="navbar-nav mr-auto">
-                    {{#if isHome}}
-                    <li class="nav-item active">
-                    {{else}}
                     <li class="nav-item">
-                    {{/if}}
                         <a class="nav-link" href="/">Home</a>
                     </li>
 
-                    {{#unless isHome}}
-                    <li class="nav-item active">
-                    {{else}}
                     <li class="nav-item">
-                    {{/unless}}
                         <a class="nav-link" href="/log">Log</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/config">Config</a>
                     </li>
                 </ul>
                 <h3><span id="badgeConnectionStatus" class="badge badge-danger">Disconnected</span></h3>

@@ -5,20 +5,20 @@ let winston = require("winston");
 
 module.exports.initialize = (bus, config, http) => {
     winston.info("Initializing Hue plugin...");
-    discoverBridge(bus, config.hueUserKey);
+    discoverBridge(bus, config);
     winston.info("Hue plugin initialized");
 };
 
-function discoverBridge(bus, hueUserKey) {
+function discoverBridge(bus, config) {
     huejay.discover()
         .then((bridges) => {
             if (bridges.length > 0) {
                 let bridge = bridges[0];
-                winston.debug("Hue Bridge found with ip: " + bridge.ip);
-                let client = createBridgeClient(bridge.ip, hueUserKey);
-                initEvents(client, bus);
+                winston.verbose("Hue Bridge found with ip: " + bridge.ip);
+                let client = createBridgeClient(bridge.ip, config.hueUserKey);
+                initEvents(client, bus, config);
             } else {
-                winston.debug("No hue bridges found!");
+                winston.warn("No hue bridges found!");
             }
         })
         .catch((error) => {
@@ -35,12 +35,12 @@ function createBridgeClient(ip, hueUserKey) {
     return client;
 }
 
-function initEvents(client, bus) {
+function initEvents(client, bus, config) {
     winston.info("Initializing Hue events...");
 
     setInterval(() => {
         pollSensorSonosPlayState(client, bus);
-    }, 5000);
+    }, config.hueStateUpdateInterval);
 
     winston.info("Hue events initialized");
 }
@@ -51,6 +51,7 @@ let lastUpdated = null;
 
 function pollSensorSonosPlayState(client, bus) {
     winston.debug("Polling Hue sensor with id: " + sonosPlayStateSensorId);
+
     client.sensors.getById(5)
         .then(sensor => {
             let flagState = sensor.state.attributes.attributes.flag;
@@ -60,11 +61,12 @@ function pollSensorSonosPlayState(client, bus) {
             winston.debug("Sensor timestamp: " + timestamp);
 
             if (lastUpdated == null) {
-                winston.debug("First time polling SonosPlayState sensor, updating local variables");
+                winston.verbose("First time polling SonosPlayState sensor, updating local variables");
                 lastFlagState = flagState;
                 lastUpdated = timestamp;
+                
             } else if (lastFlagState != flagState && lastUpdated != timestamp) {
-                winston.debug("Hue SonosPlayState sensor updated!");
+                winston.verbose("Hue SonosPlayState sensor updated!");
                 lastFlagState = flagState;
                 lastUpdated = timestamp;
 

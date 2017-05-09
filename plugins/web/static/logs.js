@@ -1,22 +1,16 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    console.log("DOMContentLoaded");
+    let wsLog = new WebSocket("ws://" + location.host + "/winston");
 
-    let wsLog = getLogSocket();
-    let container = document.getElementById("logContainer");
+    wsLog.onmessage = (evt) => {
+        let data = JSON.parse(evt.data);
+        addLogItem(data[0]);
+    };
 
     wsLog.onopen = () => {
         console.log("socket opened");
         setBadgeConnected();
-    };
-
-    wsLog.onmessage = (evt) => {
-        let data = JSON.parse(evt.data);
-        let wrapper = document.createElement("div");
-        wrapper.innerText = formatLog(data[0]);
-
-        container.appendChild(wrapper);
     };
 
     wsLog.onclose = () => {
@@ -24,3 +18,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
         setBadgeDisconnected();
     };
 });
+
+function addLogItem(item) {
+    $("#log tr:last")
+        .after(`<tr><td>${item.createdAt}</td><td>${item.level}</td><td>${item.message}</td></tr>`);
+}

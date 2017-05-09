@@ -44,15 +44,14 @@ winston.info(`http server listening on port: ${config.port}`);
 let bus = eventbus.initialize(server);
 
 //Init plugins
-//Crude plugin system
 winston.info("Loading plugins...");
 
 require("./plugins/echo").initialize(bus);
 require("./plugins/pushover/pushover").initialize(bus, config);
-require("./plugins/sonos/sonos").initialize(bus);
+require("./plugins/sonos/sonos").initialize(bus, config);
 require("./plugins/hue/hue").initialize(bus, config);
-require("./plugins/web/web").initialize(bus, app);
-//require("./plugins/gpio/doorbell").initialize(bus);
+//require("./plugins/gpio/doorbell").initialize(bus, config);
+require("./plugins/web/web").initialize(bus, app, config);
 
 winston.info("Plugin load done!");
 

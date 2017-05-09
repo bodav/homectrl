@@ -4,5 +4,8 @@
     "logLevel": "debug",
     "hueUserKey": "",
     "pushoverAppKey": "",
-    "pushoverUserKey": ""
+    "pushoverUserKey": "",
+    "hueStateUpdateInterval": 3000,
+    "defaultSonosPlayUri": "",
+    "doorbellGpioPin": 7
 }

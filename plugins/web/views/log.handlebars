@@ -1,10 +1,25 @@
 <h1>{{viewTitle}}</h1>
 
 <div class="row">
-    <div class="col-md-12" id="logContainer">
-        {{#each logs}} 
-        <div>[{{this.timestamp}}][{{this.level}}]: {{this.message}}</div>
-        {{/each}}
+    <div class="col-md-12">
+        <table id="log" class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Level</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#each logs}} 
+                <tr>
+                    <td>{{this.timestamp}}</td>
+                    <td>{{this.level}}</td>
+                    <td>{{this.message}}</td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
     </div>
 </div>
 

@@ -1,10 +1,7 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    console.log("DOMContentLoaded");
-
-    let ws = getEventSocket();
-    let container = document.getElementById("eventContainer");
+    let ws = new WebSocket("ws://" + location.host + "/eventbus");
 
     let btnSend = document.getElementById("btnSend");
     let eventInput = document.getElementById("eventInput");
@@ -21,17 +18,14 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }
     }, true);
 
+    ws.onmessage = (evt) => {
+        let data = JSON.parse(evt.data);
+        addEventLogItem(data);
+    };
+
     ws.onopen = () => {
         console.log("socket opened");
         setBadgeConnected();
-    };
-
-    ws.onmessage = (evt) => {
-        let data = JSON.parse(evt.data);
-        let wrapper = document.createElement("div");
-        wrapper.innerText = formatEvent(data);
-
-        container.appendChild(wrapper);
     };
 
     ws.onclose = () => {
@@ -39,3 +33,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
         setBadgeDisconnected();
     };
 });
+
+function addEventLogItem(item) {
+    $("#eventLog tr:last")
+        .after(`<tr><td>${item.event}</td><td>${JSON.stringify(item.payload)}</td></tr>`);
+}

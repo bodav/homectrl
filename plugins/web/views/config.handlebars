@@ -1,0 +1,22 @@
+<h1>{{viewTitle}}</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each config}} 
+                <tr>
+                    <td>{{@key}}</td>
+                    <td>{{this}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

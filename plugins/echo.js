@@ -6,7 +6,7 @@ module.exports.initialize = (bus) => {
     winston.info("Initializing Echo plugin...");
 
     bus.on("echo.ping", (payload) => {
-        winston.debug("[Event][echo.ping]: " + payload);
+        winston.verbose("[Event][echo.ping]: " + payload);
         bus.emit("echo.pong", payload);
     });
 
